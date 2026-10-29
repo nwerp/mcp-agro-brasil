@@ -28,6 +28,8 @@ Tools AgroAPI opcionais (registradas somente com credenciais configuradas):
 
 from __future__ import annotations
 
+import os
+
 import fastmcp
 
 from mcp_agro_brasil.agroapi_tools import registrar_tools_agroapi
@@ -345,7 +347,15 @@ AGROAPI_ENABLED = registrar_tools_agroapi(app)
 
 def main() -> None:
     """Ponto de entrada para execução via CLI."""
-    app.run()
+    transport = os.environ.get("FASTMCP_TRANSPORT", "stdio")
+    if transport == "stdio":
+        app.run()
+    else:
+        app.run(
+            transport=transport,
+            host=os.environ.get("HOST", "0.0.0.0"),
+            port=int(os.environ.get("PORT", "8000")),
+        )
 
 
 if __name__ == "__main__":
